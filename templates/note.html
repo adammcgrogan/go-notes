@@ -8,7 +8,14 @@
         <span class="label"><span class="label-icon">#</span> {{.}}</span>
         {{end}}
     </div>
-    <div>{{.Post.Content}}</div>
+    <div>{{.Post.Content | markdownify}}</div>
+    <hr>
+    <form action="/note/delete/{{.Post.Slug}}" method="POST" class="delete-form">
+        <button type="submit" class="delete-button"
+            onclick="return confirm('Are you sure you want to delete this note?');">
+            Delete Note
+        </button>
+    </form>
     <hr>
     <a href="/" class="back-link">← Back to All Notes</a>
 </div>

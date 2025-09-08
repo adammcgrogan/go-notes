@@ -253,3 +253,34 @@ Base styling for labels, used on both the homepage and single note page.
     line-height: 1;
     vertical-align: middle;
 }
+
+/* Delete Button Styling */
+.delete-form {
+    margin-bottom: 20px;
+    text-align: right;
+    /* Aligns button to the right */
+}
+
+button.delete-button {
+    background-color: #dc3545;
+    /* A standard 'danger' red */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+}
+
+button.delete-button:hover {
+    background-color: #c82333;
+    /* A darker red on hover */
+}
+
+.preserve-whitespace {
+    white-space: pre-wrap;
+    -moz-tab-size: 4;
+    tab-size: 4;
+}

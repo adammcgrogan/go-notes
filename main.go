@@ -9,8 +9,9 @@ import (
 	"strings"
 	"time"
 
-	_ "github.com/jackc/pgx/v5/stdlib" // The pgx driver
-	"github.com/lib/pq"                // For handling Postgres arrays
+	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/lib/pq"
+	"github.com/yuin/goldmark"
 )
 
 // The Post struct is updated for the database schema.
@@ -40,6 +41,18 @@ var (
 	postTemplate *template.Template
 )
 
+var md = goldmark.New(
+	goldmark.WithRendererOptions(),
+)
+
+func markdownify(content template.HTML) template.HTML {
+	var buf strings.Builder
+	if err := md.Convert([]byte(content), &buf); err != nil {
+		return content
+	}
+	return template.HTML(buf.String())
+}
+
 func init() {
 	// --- DATABASE CONNECTION ---
 	connStr := "host=localhost port=5432 user=myuser password=mypassword dbname=notes_db sslmode=disable"
@@ -68,7 +81,7 @@ func init() {
 	log.Println("Database connection successful and table checked.")
 
 	// --- TEMPLATE PARSING ---
-	funcMap := template.FuncMap{"truncate": truncate}
+	funcMap := template.FuncMap{"truncate": truncate, "markdownify": markdownify}
 	homeTemplate = template.Must(template.New("home").Funcs(funcMap).ParseFiles("templates/base.html", "templates/index.html"))
 	newTemplate = template.Must(template.New("new").Funcs(funcMap).ParseFiles("templates/base.html", "templates/new.html"))
 	postTemplate = template.Must(template.New("post").Funcs(funcMap).ParseFiles("templates/base.html", "templates/note.html"))
@@ -133,6 +146,28 @@ func newNoteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func deleteNoteHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	slug := r.URL.Path[len("/note/delete/"):]
+	if slug == "" {
+		http.Error(w, "Missing note identifier", http.StatusBadRequest)
+		return
+	}
+
+	_, err := db.Exec("DELETE FROM notes WHERE slug = $1", slug)
+	if err != nil {
+		http.Error(w, "Failed to delete note", http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 func postHandler(w http.ResponseWriter, r *http.Request) {
 	slug := r.URL.Path[len("/note/"):]
 	var p Post
@@ -158,6 +193,7 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/note/", postHandler)
+	http.HandleFunc("/note/delete/", deleteNoteHandler)
 	http.HandleFunc("/new", newNoteHandler)
 	log.Println("Server starting on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

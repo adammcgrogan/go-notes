@@ -5,6 +5,7 @@ go 1.25.1
 require (
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/lib/pq v1.10.9
+	github.com/yuin/goldmark v1.7.13
 )
 
 require (
