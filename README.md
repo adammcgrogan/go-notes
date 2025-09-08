@@ -10,9 +10,10 @@ A simple web application built with the Go standard library. This project was cr
 - Clean UI: Styled with CSS for a clean, modern card-based layout.
 
 ### Running Locally
-Prerequisites: Go
+Prerequisites: Go, Docker
 
 Instructions:
-1. Clone the repository: `git clone [https://github.com/YourUsername/go-notes.git](https://github.com/YourUsername/go-notes.git)`, `cd go-notes`.
-2. Run the application: `go run .`
-3. Open `http://localhost:8080` in your browser.
+1. Clone the repository: `git clone [https://github.com/adammcgrogan/go-notes.git](https://github.com/adammcgrogan/go-notes.git)`, `cd go-notes`.
+2. Set up the database: `docker-compose up -d`
+3. Run the application: `go run .`
+4. Open `http://localhost:8080` in your browser.
