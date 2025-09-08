@@ -3,8 +3,13 @@
     <h1>{{.Post.Title}}</h1>
     <p><small>Published on {{.Post.Date.Format "January 2, 2006"}}</small></p>
     <hr>
-    <div>
-        {{.Post.Content}}
+    <div class="post-labels">
+        {{range .Post.Labels}}
+        <span class="label"><span class="label-icon">#</span> {{.}}</span>
+        {{end}}
     </div>
+    <div>{{.Post.Content}}</div>
+    <hr>
+    <a href="/" class="back-link">← Back to All Notes</a>
 </div>
 {{end}}

@@ -18,6 +18,7 @@ type Post struct {
 	Slug    string
 	Date    time.Time
 	Content template.HTML
+	Labels  []string
 }
 
 type PageData struct {
@@ -38,7 +39,8 @@ var posts = []*Post{
 		Title:   "My First Notes Post",
 		Slug:    "hello-world",
 		Date:    time.Date(2025, 9, 8, 0, 0, 0, 0, time.UTC),
-		Content: "Welcome to my notes! This is a simple note to get you started.\n\nThis is the second line, which you can now see on the full post page.",
+		Content: "Welcome to my notes! This is a simple note to get started.\n\nThis is the second line, which you can now see on the full post page.",
+		Labels:  []string{"welcome", "introduction"},
 	},
 }
 
@@ -48,7 +50,7 @@ We add a 'postTemplate' variable to hold our new single-post page template.
 var (
 	homeTemplate *template.Template
 	newTemplate  *template.Template
-	postTemplate *template.Template // Add this line
+	postTemplate *template.Template
 )
 
 /*
@@ -91,12 +93,24 @@ func newNoteHandler(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		title := r.FormValue("title")
 		content := r.FormValue("content")
+
+		labelsStr := r.FormValue("labels")
+		var labels []string
+		rawLabels := strings.Split(labelsStr, ",")
+		for _, label := range rawLabels {
+			trimmed := strings.TrimSpace(label)
+			if trimmed != "" {
+				labels = append(labels, trimmed)
+			}
+		}
+
 		slug := fmt.Sprintf("note-%d", time.Now().Unix())
 		newPost := &Post{
 			Title:   title,
 			Slug:    slug,
 			Date:    time.Now(),
 			Content: template.HTML(content),
+			Labels:  labels,
 		}
 		posts = append([]*Post{newPost}, posts...)
 		http.Redirect(w, r, "/", http.StatusSeeOther)

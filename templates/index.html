@@ -2,14 +2,24 @@
 <h1>{{.Title}}</h1>
 {{range .Posts}}
 <div class="post">
-    <h2><a href="/note/{{.Slug}}">{{.Title}}</a></h2>
-    <p><small>{{.Date.Format "January 2, 2006 at 3:04 PM"}}</small></p>
+    <a href="/note/{{.Slug}}" class="post-link">
+        <div class="post-header">
+            <h2 class="post-title">{{.Title}}</h2>
+            <span class="post-date">{{.Date.Format "Jan 2, 2006"}}</span>
+        </div>
 
-    <div>{{truncate .Content}}</div>
+        <div class="post-content-preview">
+            {{truncate .Content}}
+        </div>
 
+        <div class="post-labels">
+            {{range .Labels}}
+            <span class="label"># {{.}}</span>
+            {{end}}
+        </div>
+    </a>
 </div>
-<hr>
 {{else}}
-<p>No notes yet! Create one.</p>
+<p>No posts yet! Create one.</p>
 {{end}}
 {{end}}
