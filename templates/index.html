@@ -1,0 +1,15 @@
+{{define "content"}}
+<h1>{{.Title}}</h1>
+{{range .Posts}}
+<div class="post">
+    <h2><a href="/note/{{.Slug}}">{{.Title}}</a></h2>
+    <p><small>{{.Date.Format "January 2, 2006 at 3:04 PM"}}</small></p>
+
+    <div>{{truncate .Content}}</div>
+
+</div>
+<hr>
+{{else}}
+<p>No notes yet! Create one.</p>
+{{end}}
+{{end}}

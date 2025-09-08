@@ -1,0 +1,10 @@
+{{define "content"}}
+<div class="post-full">
+    <h1>{{.Post.Title}}</h1>
+    <p><small>Published on {{.Post.Date.Format "January 2, 2006"}}</small></p>
+    <hr>
+    <div>
+        {{.Post.Content}}
+    </div>
+</div>
+{{end}}
